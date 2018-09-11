@@ -4,7 +4,15 @@ from paraview.simple import *
 paraview.simple._DisableFirstRenderCameraReset()
 
 # create a new 'OpenFOAMReader'
-case_data = OpenFOAMReader(FileName='/home/agarwal32/OpenFOAM/agarwal32-2.1.1/run/nozzle-internal-flow/sprayA-rough-nozzle/rough-5p8mum-5p3Mcells/rough-5p8mum-5p3Mcells.foam')
+#case_data = OpenFOAMReader(FileName='/home/agarwal32/OpenFOAM/agarwal32-2.1.1/run/nozzle-internal-flow/cylindrical_nozzle/5p5_micron/5p5_micron.foam')
+
+#case_data = OpenFOAMReader(FileName='/home/agarwal32/OpenFOAM/agarwal32-2.1.1/run/linear-stability-sprayA-nozzle/smooth_sprayA_576_nozzle/large_external_domain/v1_6Mcells/rho_715_u_412/original_case/original_case.foam')
+#case_data = OpenFOAMReader(FileName='/home/agarwal32/OpenFOAM/agarwal32-2.1.1/run/linear-stability-sprayA-nozzle/smooth_sprayA_576_nozzle/large_external_domain/v6_15Mcells/original_case/original_case.foam')
+case_data = OpenFOAMReader(FileName='/home/agarwal32/OpenFOAM/agarwal32-2.1.1/run/linear-stability-sprayA-nozzle/smooth_sprayA_576_nozzle/large_external_domain/v7_x_max_4mm_22Mcells/original_case/original_case.foam')
+
+#case_data = OpenFOAMReader(FileName='/home/agarwal32/OpenFOAM/agarwal32-2.1.1/run/nozzle-internal-flow/sprayA-rough-nozzle/rough-5p8mum-5p3Mcells/rough-5p8mum-5p3Mcells.foam')
+#case_data = OpenFOAMReader(FileName='/home/agarwal32/OpenFOAM/agarwal32-2.1.1/run/nozzle-internal-flow/sprayA-rough-nozzle/rough-4p5mum-10p5Mcells/rough-4p5mum-10p5Mcells.foam')
+
 case_data.MeshRegions = ['internalMesh']
 case_data.CellArrays = ['TKE', 'U', 'UMean', 'UPrime2Mean', 'alpha1', 'alpha1Mean', 'beta', 'beta_Filtered', 'p_rgh']
 
@@ -58,6 +66,15 @@ renderView1.ResetCamera()
 # update the view to ensure updated data information
 renderView1.Update()
 
+view = GetActiveView()
+reader = GetActiveSource()
+tsteps = reader.TimestepValues
+annTime = AnnotateTimeFilter(reader)
+Show(annTime)
+view.ViewTime = tsteps[-1]
+Render()
+
+
 # create a new 'Contour'
 contour1 = Contour(Input=case_data)
 contour1.ContourBy = ['POINTS', 'alpha1']
@@ -103,8 +120,8 @@ perimeter = []
 locations = []
 #f = open("perimeter_data.txt", "wb")
 #writer = CreateWriter("foo.csv")
-for i in range (0, 20):
-    slice_location = (i + 1) * 90e-6
+for i in range (0, 40):
+    slice_location = (i + 0.5) * 90e-6
     locations.append(slice_location)
     # create a new 'Slice'
     slice1 = Slice(Input=contour1)
