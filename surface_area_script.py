@@ -1,17 +1,40 @@
 #### import the simple module from the paraview
+import os
 from paraview.simple import *
 #### disable automatic camera reset on 'Show'
 paraview.simple._DisableFirstRenderCameraReset()
 
+case_number = 9
 # create a new 'OpenFOAMReader'
-#case_data = OpenFOAMReader(FileName='/home/agarwal32/OpenFOAM/agarwal32-2.1.1/run/nozzle-internal-flow/cylindrical_nozzle/5p5_micron/5p5_micron.foam')
+if case_number == 1:
+    case_path = '/home/agarwal32/OpenFOAM/agarwal32-2.1.1/run/nozzle-internal-flow/cylindrical_nozzle/5p5_micron/'
+    case_file_name = '5p5_micron.foam'
+elif case_number == 2:
+    case_path = '/home/agarwal32/OpenFOAM/agarwal32-2.1.1/run/nozzle-internal-flow/cylindrical_nozzle/4p4_micron/'
+    case_file_name = '4p4_micron.foam'
+elif case_number == 3:
+    case_path = '/home/agarwal32/OpenFOAM/agarwal32-2.1.1/run/linear-stability-sprayA-nozzle/smooth_sprayA_576_nozzle/large_external_domain/v1_6Mcells/rho_715_u_412/original_case/'
+    case_file_name = 'original_case.foam'
+elif case_number == 4:
+    case_path = '/home/agarwal32/OpenFOAM/agarwal32-2.1.1/run/linear-stability-sprayA-nozzle/smooth_sprayA_576_nozzle/large_external_domain/v6_15Mcells/original_case/'
+    case_file_name = 'original_case.foam'
+elif case_number == 5:
+    case_path = '/home/agarwal32/OpenFOAM/agarwal32-2.1.1/run/linear-stability-sprayA-nozzle/smooth_sprayA_576_nozzle/large_external_domain/v7_x_max_4mm_22Mcells/original_case/'
+    case_file_name = 'original_case.foam'
+elif case_number == 6:
+    case_path = '/home/agarwal32/OpenFOAM/agarwal32-2.1.1/run/nozzle-internal-flow/sprayA-rough-nozzle/rough-5p8mum-5p3Mcells/'
+    case_file_name = 'rough-5p8mum-5p3Mcells.foam'
+elif case_number == 7:
+    case_path = '/home/agarwal32/OpenFOAM/agarwal32-2.1.1/run/nozzle-internal-flow/sprayA-rough-nozzle/rough-4p5mum-10p5Mcells/'
+    case_file_name = 'rough-4p5mum-10p5Mcells.foam'
+elif case_number == 8:
+    case_path = '/home/agarwal32/OpenFOAM/agarwal32-2.1.1/run/nozzle-internal-flow/no-nozzle/flat_hat/5p5_micron/'
+    case_file_name = '5p5_micron.foam'
+elif case_number == 9:
+    case_path = '/home/agarwal32/OpenFOAM/agarwal32-2.1.1/run/nozzle-internal-flow/no-nozzle/flat_hat/4micron_13Mcells/'
+    case_file_name = '4micron_13Mcells.foam'
 
-#case_data = OpenFOAMReader(FileName='/home/agarwal32/OpenFOAM/agarwal32-2.1.1/run/linear-stability-sprayA-nozzle/smooth_sprayA_576_nozzle/large_external_domain/v1_6Mcells/rho_715_u_412/original_case/original_case.foam')
-#case_data = OpenFOAMReader(FileName='/home/agarwal32/OpenFOAM/agarwal32-2.1.1/run/linear-stability-sprayA-nozzle/smooth_sprayA_576_nozzle/large_external_domain/v6_15Mcells/original_case/original_case.foam')
-case_data = OpenFOAMReader(FileName='/home/agarwal32/OpenFOAM/agarwal32-2.1.1/run/linear-stability-sprayA-nozzle/smooth_sprayA_576_nozzle/large_external_domain/v7_x_max_4mm_22Mcells/original_case/original_case.foam')
-
-#case_data = OpenFOAMReader(FileName='/home/agarwal32/OpenFOAM/agarwal32-2.1.1/run/nozzle-internal-flow/sprayA-rough-nozzle/rough-5p8mum-5p3Mcells/rough-5p8mum-5p3Mcells.foam')
-#case_data = OpenFOAMReader(FileName='/home/agarwal32/OpenFOAM/agarwal32-2.1.1/run/nozzle-internal-flow/sprayA-rough-nozzle/rough-4p5mum-10p5Mcells/rough-4p5mum-10p5Mcells.foam')
+case_data = OpenFOAMReader(FileName=case_path + case_file_name)
 
 case_data.MeshRegions = ['internalMesh']
 case_data.CellArrays = ['TKE', 'U', 'UMean', 'UPrime2Mean', 'alpha1', 'alpha1Mean', 'beta', 'beta_Filtered', 'p_rgh']
@@ -116,11 +139,10 @@ Hide(case_data, renderView1)
 # update the view to ensure updated data information
 renderView1.Update()
 
+get_perimeter_data = False
 perimeter = []
 locations = []
-#f = open("perimeter_data.txt", "wb")
-#writer = CreateWriter("foo.csv")
-for i in range (0, 40):
+for i in range (0, 1):
     slice_location = (i + 0.5) * 90e-6
     locations.append(slice_location)
     # create a new 'Slice'
@@ -169,12 +191,18 @@ for i in range (0, 40):
     # update the view to ensure updated data information
     renderView1.Update()
 
-    # create a new 'Integrate Variables'
-    integrateVariables1 = IntegrateVariables(Input=slice1)
-    temp = integrateVariables1.GetCellDataInformation().GetArray('Length').GetRange()
-    perimeter.append(temp[0])
-    #f.write('%d,   ', slice_location)
-    #f.write('%d\n'  , temp[0])
+    # save data
+    #os.chdir(case_path)
+    #directory = './surface_disturbance_data/'
+    #if not os.path.exists(directory):
+    #    os.makedirs(directory)
+    SaveData(case_path + 'contour_data.csv', proxy=contour1, WriteAllTimeSteps=1)
+
+    if (get_perimeter_data):
+        # create a new 'Integrate Variables'
+        integrateVariables1 = IntegrateVariables(Input=slice1)
+        temp = integrateVariables1.GetCellDataInformation().GetArray('Length').GetRange()
+        perimeter.append(temp[0])
 
 # Create a new 'SpreadSheet View'
 spreadSheetView1 = CreateView('SpreadSheetView')
