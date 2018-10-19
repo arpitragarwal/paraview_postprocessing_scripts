@@ -4,7 +4,7 @@ from paraview.simple import *
 #### disable automatic camera reset on 'Show'
 paraview.simple._DisableFirstRenderCameraReset()
 
-case_number = 8
+case_number = 9
 # create a new 'OpenFOAMReader'
 if case_number == 1:
     case_path = '/home/agarwal32/OpenFOAM/agarwal32-2.1.1/run/nozzle-internal-flow/cylindrical_nozzle/5p5_micron/'
@@ -129,7 +129,7 @@ locations = []
 for i in range (0, 25):
     slice_location = -0.5e-3 + (i) * 45e-6
     if case_number > 7:
-        slice_location = 0 + (i) * 45e-6
+        slice_location = 2e-6 + (i) * 45e-6
     locations.append(slice_location)
     # create a new 'Slice'
     slice1 = Slice(Input=calculator2)
